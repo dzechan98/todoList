@@ -13,6 +13,8 @@ function App() {
 
     const [todos, setTodos] = useState([]);
 
+    const [timeDeadline, setTimeDeadline] = useState("");
+
     const [getTodoList, setGetTodoList] = useState(false);
 
     useEffect(() => {
@@ -30,7 +32,8 @@ function App() {
                 console.log(item);
                 if (
                     item.expirationDate.fullTime < new Date().getTime() &&
-                    !item.isExprise
+                    !item.isExprise &&
+                    !item.isComplete
                 ) {
                     await axios.patch(
                         `http://localhost:4000/todos/${item.id}`,
@@ -49,10 +52,14 @@ function App() {
     const inputRef = useRef();
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (todo.length === 0) {
+        if (todo.length === 0 || timeDeadline == null) {
             return null;
         }
 
+        const arr = timeDeadline.split(":");
+        const fullTime = new Date();
+        fullTime.setHours(arr[0]);
+        fullTime.setMinutes(arr[1]);
         const indexEdit = todos.findIndex((item) => item.isEdit === true);
 
         if (indexEdit !== -1) {
@@ -62,6 +69,12 @@ function App() {
                     ...todos[indexEdit],
                     todo,
                     isEdit: false,
+                    expirationDate: {
+                        formattedTime: formattedTodayTime(
+                            new Date(fullTime.getTime())
+                        ),
+                        fullTime: fullTime.getTime(),
+                    },
                 }
             );
         } else {
@@ -73,9 +86,9 @@ function App() {
                 createDateAt: formattedToday(new Date()),
                 expirationDate: {
                     formattedTime: formattedTodayTime(
-                        new Date(new Date().getTime() + 1 * 60 * 1000)
+                        new Date(fullTime.getTime())
                     ),
-                    fullTime: new Date().getTime() + 1 * 60 * 1000,
+                    fullTime: fullTime.getTime(),
                 },
                 isExprise: false,
             };
@@ -85,6 +98,7 @@ function App() {
 
         setTodo("");
         setGetTodoList(!getTodoList);
+        setTimeDeadline("");
         inputRef.current.focus();
     };
 
@@ -121,6 +135,8 @@ function App() {
                     handleSubmit={handleSubmit}
                     inputRef={inputRef}
                     todo={todo}
+                    timeDeadline={timeDeadline}
+                    setTimeDeadline={setTimeDeadline}
                 />
             </div>
             <div className="list-todos grid grid-cols-3 gap-5">

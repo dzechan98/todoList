@@ -1,10 +1,10 @@
-function Todos({ todos, toggleComplete, handleEdit, handleDelete }) {
+function CompletedTodo({ todos, handleDelete, toggleComplete }) {
     return (
         <div className="">
-            <h2 className="text-center font-bold text-2xl text-red-400 mb-2">
-                Việc chưa làm
+            <h2 className="text-center font-bold text-2xl text-green-400 mb-2">
+                Việc đã làm xong
             </h2>
-            <div className="flex flex-col border-2 border-red-400  rounded-lg min-h-[400px] p-5 ">
+            <div className="flex flex-col border-2 border-green-400  rounded-lg min-h-[400px] p-5">
                 {todos.length > 0 ? (
                     todos.map((item) => (
                         <li
@@ -13,21 +13,13 @@ function Todos({ todos, toggleComplete, handleEdit, handleDelete }) {
                                 item.isComplete ? "active" : ""
                             }`}
                         >
-                            <div className="font-bold w-[70%] break-words text-[20px]">
-                                <p>{item.todo}</p>
-                                <p className="text-[14px] text-slate-800">
-                                    Hết hạn vào lúc{" "}
-                                    {item.expirationDate.formattedTime}
-                                </p>
-                            </div>
+                            <p className={`font-bold w-[70%] break-words`}>
+                                {item.todo}
+                            </p>
                             <div className="icon text-[18px]">
                                 <i
-                                    className="fa-solid fa-check mr-3 cursor-pointer "
+                                    className="fa-solid fa-rotate-left mr-3 cursor-pointer"
                                     onClick={() => toggleComplete(item.id)}
-                                ></i>
-                                <i
-                                    className="fa-solid fa-pen-to-square edit-icon mr-3 cursor-pointer"
-                                    onClick={() => handleEdit(item.id)}
                                 ></i>
                                 <i
                                     className="fa-solid fa-trash delete-icon cursor-pointer"
@@ -46,4 +38,4 @@ function Todos({ todos, toggleComplete, handleEdit, handleDelete }) {
     );
 }
 
-export default Todos;
+export default CompletedTodo;
